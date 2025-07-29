@@ -13,27 +13,40 @@
         (d) skim through it to better understand the type of information included
 """
 
-
 import requests
 
 class SecEdgar:
     def __init__(self, fileurl):
         self.fileurl = fileurl
-        self.namedict = {}
-        self.tickerdict = {}
-
-        headers = {'user-agent': 'MLT <intials> <user.gmail.com>'}
-        r = requests.get(self.fileurl, headers=headers)
-
-        self.filejson = r.json
-
-        print(r.text)
-        print(self.filejson)
-
-        self.cik_json_to_dict()
-
-    def cik_json_to_dict(self):
         self.name_dict = {}
         self.ticker_dict = {}
 
+        headers = {'user-agent': 'MLT LA leilaalston07@gmail.com'}  # replace with your information
+        r = requests.get(self.fileurl, headers=headers)
+
+        if r.status_code == 200: 
+            self.filejson = r.json()
+            self.cik_json_to_dict()
+        else:
+            print(f"Error fetching data: {r.status_code}")
+            self.filejson = {}
+
+    def cik_json_to_dict(self):
+        for entry in self.filejson.values():
+            cik = str(entry['cik_str']).zfill(10)
+            name = entry['title'].strip().upper()
+            ticker = entry['ticker'].strip().upper()
+            info = (cik, name, ticker)
+            self.name_dict[name] = info
+            self.ticker_dict[ticker] = info
+    
+    def name_to_cik(self, name):
+        return self.name_dict.get(name.strip().upper())
+    
+    def ticker_to_cik(self, ticker):
+        return self.ticker_dict.get(ticker.strip().upper())
+
 se = SecEdgar('https://www.sec.gov/files/company_tickers.json')
+
+print(se.ticker_to_cik('AAPL'))
+print(se.name_to_cik('Apple Inc.'))
