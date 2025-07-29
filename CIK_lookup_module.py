@@ -29,7 +29,7 @@ class SecEdgar:
         self.namedict = {}
         self.tickerdict = {}
 
-        headers = {'user-agent': 'MLT LA leilaalston07@gmail.com'}
+        headers = {'user-agent': 'MLT <intials> <user.gmail.com>'}
         r = requests.get(self.fileurl, headers=headers)
 
         self.filejson = r.json
